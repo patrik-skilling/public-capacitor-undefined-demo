@@ -3,6 +3,10 @@
   "appName": "capacitor-app",
   "bundledWebRuntime": false,
   "webDir": "dist",
+  "appendUserAgent": "fooTest",
+  "server": {
+    "url": "https://support.skilling.com"
+  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
