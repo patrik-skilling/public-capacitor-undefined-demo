@@ -279,10 +279,6 @@ var nativeBridge = (function (exports) {
                     callback(result.path);
                 });
             };
-            IonicWebView.setServerAssetPath = (path) => {
-                var _a;
-                (_a = Plugins === null || Plugins === void 0 ? void 0 : Plugins.WebView) === null || _a === void 0 ? void 0 : _a.setServerAssetPath({ path });
-            };
             IonicWebView.setServerBasePath = (path) => {
                 var _a;
                 (_a = Plugins === null || Plugins === void 0 ? void 0 : Plugins.WebView) === null || _a === void 0 ? void 0 : _a.setServerBasePath({ path });
@@ -479,7 +475,6 @@ var nativeBridge = (function (exports) {
                         const tag = `CapacitorHttp fetch ${Date.now()} ${resource}`;
                         console.time(tag);
                         try {
-                            // intercept request & pass to the bridge
                             const { body, method } = request;
                             const optionHeaders = Object.fromEntries(request.headers.entries());
                             const { data: requestData, type, headers, } = await convertBody((options === null || options === void 0 ? void 0 : options.body) || body || undefined, optionHeaders['Content-Type'] || optionHeaders['content-type']);
@@ -633,22 +628,12 @@ var nativeBridge = (function (exports) {
                                             }
                                             this._headers = nativeResponse.headers;
                                             this.status = nativeResponse.status;
-                                            const responseString = typeof nativeResponse.data !== 'string'
-                                                ? JSON.stringify(nativeResponse.data)
-                                                : nativeResponse.data;
                                             if (this.responseType === '' ||
                                                 this.responseType === 'text') {
-                                                this.response = responseString;
-                                            }
-                                            else if (this.responseType === 'blob') {
-                                                this.response = new Blob([responseString], {
-                                                    type: 'application/json',
-                                                });
-                                            }
-                                            else if (this.responseType === 'arraybuffer') {
-                                                const encoder = new TextEncoder();
-                                                const uint8Array = encoder.encode(responseString);
-                                                this.response = uint8Array.buffer;
+                                                this.response =
+                                                    typeof nativeResponse.data !== 'string'
+                                                        ? JSON.stringify(nativeResponse.data)
+                                                        : nativeResponse.data;
                                             }
                                             else {
                                                 this.response = nativeResponse.data;
@@ -715,7 +700,7 @@ var nativeBridge = (function (exports) {
                             }
                             let returnString = '';
                             for (const key in this._headers) {
-                                if (key.toLowerCase() !== 'set-cookie') {
+                                if (key != 'Set-Cookie') {
                                     returnString += key + ': ' + this._headers[key] + '\r\n';
                                 }
                             }
@@ -726,12 +711,7 @@ var nativeBridge = (function (exports) {
                             if (isRelativeURL(this._url)) {
                                 return win.CapacitorWebXMLHttpRequest.getResponseHeader.call(this, name);
                             }
-                            for (const key in this._headers) {
-                                if (key.toLowerCase() === name.toLowerCase()) {
-                                    return this._headers[key];
-                                }
-                            }
-                            return null;
+                            return this._headers[name];
                         };
                         Object.setPrototypeOf(xhr, prototype);
                         return xhr;

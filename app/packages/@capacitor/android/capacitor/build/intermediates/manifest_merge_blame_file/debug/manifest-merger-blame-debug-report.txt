@@ -3,6 +3,5 @@
 3    package="com.getcapacitor.android" >
 4
 5    <uses-sdk android:minSdkVersion="22" />
-5-->/Users/patrik/development/public-capacitor-undefined-demo/app/packages/@capacitor/android/capacitor/src/main/AndroidManifest.xml
 6
 7</manifest>
